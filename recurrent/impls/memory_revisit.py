@@ -13,6 +13,7 @@ from typing_extensions import override
 import verl.utils.torch_functional as verl_F
 from recurrent.interface import RAgent, RConfig, RDataset, RRegister
 from recurrent.utils import TokenTemplate, chat_template, now, unpad
+from recurrent.impls.tf_idf_retriever import TfidfRetriever
 from verl.protocol import DataProto
 
 logger = logging.getLogger(__file__)
@@ -166,13 +167,15 @@ class MemoryAgent(RAgent):
         self.token_message_template = TokenTemplate(self.chat_template.format(message=TEMPLATE), tokenizer)
         self.token_final_message_template = TokenTemplate(self.chat_template.format(message=TEMPLATE_FINAL_BOXED), tokenizer)
         # we assume that final_message template is difinately shorter than message_template
-        self.max_input_length = self.config.max_raw_input_length + self.token_message_template.length 
+        self.max_input_length = self.config.max_raw_input_length + self.token_message_template.length + self.config.max_raw_input_length
         logger.info(f'\n[RECURRENT] max_input_length: {self.config.max_raw_input_length}(raw) '
               f'+ {self.token_message_template.length}(message_template) = {self.max_input_length}\n')
         self.NO_MEMORY_STRING = "No previous memory"
         self.NO_MEMORY_TOKENS = torch.tensor(tokenizer.encode(self.NO_MEMORY_STRING, add_special_tokens=False), dtype=torch.long)
         self.NO_MEMORY_RECALLED_STRING = "No memory was recalled."
         self.NO_MEMORY_RECALLED_TOKENS = torch.tensor(tokenizer.encode(self.NO_MEMORY_RECALLED_STRING, add_special_tokens=False), dtype=torch.long)
+
+        self.retriever = TfidfRetriever(tokenizer)
 
     @override
     def start(self, gen_batch: DataProto, timing_raw: dict):
@@ -220,7 +223,7 @@ class MemoryAgent(RAgent):
             self.meta_info = {'input_pad_to': self.max_input_length,
                          'pad_to': self.config.gen_pad_to,
                          'generation_kwargs': {
-                          'max_tokens': self.config.gen_max_tokens_memorization,
+                          'max_tokens': self.config.max_final_response_length,
                           'n': 1 # note that we have already repeat n times in ray_trainer
                         }}
             logger.info(f'FINAL TURN: MemoryAgent.next() done')
@@ -261,8 +264,11 @@ class MemoryAgent(RAgent):
         all_decoded_responses = self.tokenizer.batch_decode(gen_output.batch['responses'], skip_special_tokens=True) # List[str], length: [recalled_bsz]
         # update recalled memory
         recalled_queries = [self._parse_recall_query(response) for response in all_decoded_responses] # List[str], length: [recalled_bsz]
-        recalled_memories = [self.look_up_memory(query, int(idx)) for query, idx in zip(recalled_queries, self.active_mask)] # List[str], length: [recalled_bsz]
-        recalled_memories = [self.NO_MEMORY_RECALLED_STRING if memory is None else memory for memory in recalled_memories]
+        if not self.is_final:
+            active_indices = self.active_mask.nonzero().squeeze().cpu().numpy()
+        else:
+            active_indices = torch.arange(len(recalled_queries), dtype=torch.int)
+        recalled_memories = [self.retriever.top1_retrieve(query, self.history_memory[idx]) for query, idx in zip(recalled_queries, active_indices)] # List[str], length: [recalled_bsz]
         recalled_memories_values = [
             torch.tensor(self.tokenizer.encode(memory_str, add_special_tokens=False), dtype=torch.long) if memory_str is not None else self.NO_MEMORY_RECALLED_TOKENS
             for memory_str in recalled_memories
@@ -286,16 +292,17 @@ class MemoryAgent(RAgent):
             self.recall_memories[self.active_mask] = recalled_memories_arr
 
             # update history memory
-            self.update_memory(all_update_memories)
+            self.update_memory(all_update_memories, active_indices)
 
         self.log_step(gen_output)
         self.step += 1
         return gen_output
 
-    def update_memory(self, memory_strings: List[str]):
+    def update_memory(self, memory_strings: List[str], active_indices: List[int]):
         # self.history_memory is a set
+        assert len(active_indices) == len(memory_strings)
         new_memories = [memory_str if memory_str is not None else self.NO_MEMORY_STRING for memory_str in memory_strings]
-        for idx, memory in zip(self.active_mask, new_memories):
+        for idx, memory in zip(active_indices, new_memories):
             self.history_memory[int(idx)].add(memory)
     
     def _preprocess_text(self, text: str) -> set[str]:
@@ -304,6 +311,7 @@ class MemoryAgent(RAgent):
         return set(text.split())
     
     def look_up_memory(self, query: str, idx: int) -> str:
+        assert False
         """Look up the top-1 memory based on the query."""
         scores = []
         if query is None:
@@ -336,12 +344,10 @@ class MemoryAgent(RAgent):
 
     def _parse_update_memory(self, text_response: str) -> str:
         try:
-            match = re.search(r'<update>(.+)</update>', text_response)
-            if match:
-                return match.group(1)
+            cleaned = re.sub(r'<recall>.*?</recall>', '', text_response, flags=re.DOTALL)
+            return cleaned.strip()
         except (ValueError, TypeError):
-            pass # Fall through to return None if parsing fails
-        return None
+            return None
 
     @override
     def done(self):

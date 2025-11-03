@@ -252,7 +252,7 @@ Qwen25_3B_ReMemR1 = Config(
     name="Qwen-3B-ReMemR1",
     ckpt="Qwen/Qwen2.5-3B-Instruct",
     tp=4,
-    method="recurrent_revisit",
+    method="rememr1",
     concur=256,
     env=ENV(RECURRENT_MAX_CONTEXT_LEN=100000000000, RECURRENT_CHUNK_SIZE=5000, RECURRENT_MAX_NEW=2048),
 )
@@ -279,7 +279,7 @@ ReMemR1_3B = Config(
     name="ReMemR1-3B",
     ckpt="CHECKPOINT_PATH",
     tp=4,
-    method="recurrent_revisit",
+    method="rememr1",
     concur=256,
     env=ENV(RECURRENT_MAX_CONTEXT_LEN=100000000000, RECURRENT_CHUNK_SIZE=5000, RECURRENT_MAX_NEW=2048),
 )
@@ -288,7 +288,7 @@ ReMemR1_7B = Config(
     name="ReMemR1-7B",
     ckpt="CHECKPOINT_PATH",
     tp=4,
-    method="recurrent_revisit",
+    method="rememr1",
     concur=256,
     env=ENV(RECURRENT_MAX_CONTEXT_LEN=100000000000, RECURRENT_CHUNK_SIZE=5000, RECURRENT_MAX_NEW=2048),
 )

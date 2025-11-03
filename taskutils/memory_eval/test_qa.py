@@ -56,8 +56,8 @@ def get_pred(data, args, out_file):
     elif args.api == "recurrent-rag":
         from utils.recurrent_rag import async_query_llm
         from utils import extract_answer
-    elif args.api == "recurrent_revisit":
-        from utils.recurrent_revisit import async_query_llm
+    elif args.api == "rememr1":
+        from utils.rememr1 import async_query_llm
         from utils import extract_boxed_answer as extract_answer
         nocallback = 'nocallback' in args.save_file
     elif args.api == "recurrent-boxed":

@@ -171,8 +171,7 @@ class LLMGenerationManager:
         assert sum(final_mask) == len(gen_batch)
         logger.info(f"ACTIVE_TRAJ_NUM: {active_num_list}")
         all_gen_output = DataProto.concat(gen_output_list)
-        all_recalled_memories_list = [go.batch['recalled_memories'] for go in gen_output_list]
-        all_gen_output.batch['recalled_memories'] = np.concatenate(all_recalled_memories_list)
+        all_gen_output.batch['recalled_memories'] = np.concatenate([go.batch['recalled_memories'] for go in gen_output_list])
         all_gen_output.batch['action_type'] = torch.ones(all_gen_output.batch['responses'].shape[0], dtype=torch.long) * 2 # [bsz]. 1: callback, 2: memory, 0: final
         all_gen_output.batch['action_type'][final_mask] = 0 # [bsz]
         return all_gen_output, final_mask, sample_index # pyright: ignore
