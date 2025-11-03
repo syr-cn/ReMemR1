@@ -6,7 +6,7 @@ ulimit -n 65535
 #################### 参数区（只需在这里修改参数） ####################
 EXP_LOG_NAME="ReMemR1_7B"
 
-N_NODE=4
+N_NODE=4 # set to 1 for single node training
 N_GPU=8
 
 # Training Setting

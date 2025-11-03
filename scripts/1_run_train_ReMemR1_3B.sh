@@ -6,7 +6,7 @@ ulimit -n 65535
 #################### 参数区（只需在这里修改参数） ####################
 EXP_LOG_NAME="ReMemR1_3B"
 
-N_NODE=2
+N_NODE=2 # set to 1 for single node training
 N_GPU=8
 
 # Training Setting
@@ -39,9 +39,11 @@ export TRAIN_PATH="${DATASET_ROOT}/hotpotqa_train_32k.parquet"
 PYTHONPATH=$PROJ_ROOT
 export WANDB_API_KEY="YOURE_WANDB_TOKEN"
 export WANDB_PROJECT="your_wandb_project"
+wandb online
 
 mkdir -p $PROJ_DIR
 mkdir -p $ROLLOUT_DIR
+mkdir -p $PROJ_ROOT/log
 
 export VERL_LOGGING_LEVEL=INFO
 export HYDRA_FULL_ERROR=1

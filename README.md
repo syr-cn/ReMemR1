@@ -18,8 +18,8 @@ pip install hydra-core accelerate tensordict torchdata wandb "tensordict<=0.6.2"
 ## Data Processing
 
 **Trianing Data:** 
-This research use the same data as [MemAgent](https://github.com/BytedTsinghua-SIA/MemAgent).
-The training data is publicly available, and can be downloaded from [huggingface](https://huggingface.co/datasets/BytedTsinghua-SIA/hotpotqa/tree/main).
+This research use the same training data as [MemAgent](https://github.com/BytedTsinghua-SIA/MemAgent).
+The data files are publicly available, and can be downloaded from [huggingface](https://huggingface.co/datasets/BytedTsinghua-SIA/hotpotqa/tree/main).
 After the download is finished, put `hotpotqa_train_32k.parquet` and `hotpotqa_dev.parquet` under `data/train/`.
 
 **Data for Evaluation:** 
@@ -30,6 +30,10 @@ bash scripts/0_run_data_process.sh
 ```
 
 ## Training
+
+### Prepare for Multi-Node Training
+
+You may skip this step if you only want to start a single-node trianing.
 
 To start multi-node training, you should first ray servers on the head and worker nodes.
 ```bash
@@ -43,11 +47,15 @@ ray start --address=<head_node_address>
 ```
 More references can be found in ray's documentation [here](https://verl.readthedocs.io/en/latest/start/multinode.html).
 
-After all the nodes are ready, the training can be launched via:
+### Start the Training
+
+After all the nodes are ready (or you prefer single-node training), the training can be launched via:
 ```bash
 bash scripts/1_run_train_ReMemR1_3B.sh
 bash scripts/1_run_train_ReMemR1_7B.sh
 ```
+
+You might adjust the `N_NODE` variable to match your number of devices.
 
 ## Evaluation
 
@@ -58,7 +66,7 @@ bash scripts/merge_ckpt.sh "results/memory_agent/ReMemR1_3B/global_step_200/acto
 ```
 This will automatically put the merged checkpoint into `results/memory_agent/ReMemR1_3B/global_step_200/actor/hf_ckpt`.
 
-Once the checkpoint merging is done, run the below script to run evaluation:
+Once the checkpoint merging is done, run the below script for evaluation:
 ```bash
 bash scripts/2_run_eval_ReMemR1.sh
 ```

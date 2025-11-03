@@ -10,4 +10,4 @@ cd taskutils/data_synthesis
 export TOKENIZERS_PARALLELISM=false
 data_sources="hotpotqa,2wikimultihopqa"
 n_subset=128
-python process_test.py --local_dir $DATAROOT --data_sources $data_sources --n_subset $n_subset
+python3 process_test.py --local_dir $DATAROOT --data_sources $data_sources --n_subset $n_subset

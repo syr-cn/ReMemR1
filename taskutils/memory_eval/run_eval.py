@@ -16,6 +16,7 @@ import time
 from dataclasses import dataclass
 import sys
 from pathlib import Path
+import subprocess
 
 sys.stdout.reconfigure(line_buffering=True)
 DASH_PORT = os.getenv("DASH_PORT", "8265")
@@ -73,8 +74,9 @@ class Config:
         self.test_process = {}
 
     def serve(self, wait=True):
-        self.pp = int(8/int(self.tp))
-        cmd = f"python -m vllm.entrypoints.openai.api_server --model {self.ckpt} --tensor-parallel-size {self.tp} --pipeline-parallel-size {self.pp} --served-model-name {Path(self.ckpt).name} --port {SERVE_PORT}"
+        self.dp = int(8/int(self.tp))
+        # cmd = f"python3 -m vllm.entrypoints.openai.api_server --model {self.ckpt} --tensor-parallel-size {self.tp} --data-parallel-size {self.dp} --served-model-name {Path(self.ckpt).name} --port {SERVE_PORT}"
+        cmd = f"python3 -m sglang.launch_server --model-path {self.ckpt} --tensor-parallel-size {self.tp} --served-model-name {Path(self.ckpt).name} --port {SERVE_PORT} --data-parallel-size {self.dp}"
         print("serving command:")
         print(cmd)
         if wait:
@@ -107,8 +109,8 @@ class Config:
         self.serve(serve)
         concur = self.concur
         for test in tests:
-            elif test in RULER_TEST_TASKS:
-                cmd = f"""python test_qa.py --model {self.model}\
+            if test in RULER_TEST_TASKS:
+                cmd = f"""python3 test_qa.py --model {self.model}\
                     --name {test} \
                     --save_dir results/{test} \
                     --save_file {self.name} \
@@ -294,8 +296,6 @@ ReMemR1_7B = Config(
 )
 
 CONFIGS = [
-    Qwen25_3B_MemAgent,
-    Qwen25_3B_ReMemR1,
     R1_7B,
     R1_14B,
     L1,
@@ -305,6 +305,8 @@ CONFIGS = [
     Qwen25_3B_128k,
     Qwen3_4B_128k,
     Qwen3_8B_128k,
+    Qwen25_3B_MemAgent,
+    Qwen25_3B_ReMemR1,
     MemAgent_3B,
     MemAgent_7B,
     ReMemR1_3B,
@@ -320,5 +322,5 @@ def run_test_tasks():
         c.run(task, serve=True, force=False)
 
 if __name__ == "__main__":
-    print(f"{SERVE_PORT=}, {DASH_PORT=}, {MODEL_ROOT=}, {REVERSED=}")
+    print(f"{SERVE_PORT=}, {DASH_PORT=}, {REVERSED=}")
     run_test_tasks()
