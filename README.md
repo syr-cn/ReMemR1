@@ -2,6 +2,38 @@
 
 This repo contains the official implementation of paper `Look Back to Reason Forward: Revisitable Memory for Long-Context LLM Agents`.
 
+## News
+- [Jan 2026] Our paper get accepted by [ICLR 2026](https://openreview.net/forum?id=1cymflI2Lh) 🎉🎉🎉
+- [Jan 2026] Nvidia propose [GDPO](https://arxiv.org/abs/2601.05242), which shares the same design logic as our multi-level reward aggregation
+- [Sep 2025] Our paper is released on [Huggingface](https://huggingface.co/papers/2509.23040) and [Alphaxiv](https://www.alphaxiv.org/abs/2509.23040). Please upvote our paper if you like this work :)
+
+## Overview
+
+- **Conceptual Example:** wheat gleaning in the field
+
+<p align="center">
+  <img width="600" alt="image" src="./conceptual_example.png" />
+</p>
+
+- Q1: How we address the constraints in linear doc scan?
+- A1: We introduce **Callback Mechanism** to allow non-linear memory re-visit.
+
+<p align="center">
+  <img width="600" alt="image" src="./teaser.png" />
+</p>
+
+<p align="center">
+  <img width="600" alt="image" src="./framework.png" />
+</p>
+
+- Q2: How we precisely reward callback/update behaviors?
+- A2: We introduce Multi-Level Rewarding, aggregated at advantage level.
+
+<p align="center">
+  <img width="600" alt="image" src="./reward_design.png" />
+</p>
+
+
 ## Installation
 
 ```bash
@@ -75,3 +107,25 @@ bash scripts/2_run_eval_ReMemR1.sh
 
 This project is licensed under the MIT License.
 It includes components from [MemAgent](https://github.com/BytedTsinghua-SIA/MemAgent), licensed under the Apache License 2.0. Thanks for their awesome work!
+
+## Citation
+
+```latex
+@article{rememr1,
+  author       = {Yaorui Shi and
+                  Yuxin Chen and
+                  Siyuan Wang and
+                  Sihang Li and
+                  Hengxing Cai and
+                  Qi Gu and
+                  Xiang Wang and
+                  An Zhang},
+  title        = {Look Back to Reason Forward: Revisitable Memory for Long-Context {LLM}
+                  Agents},
+  journal      = {CoRR},
+  volume       = {abs/2509.23040},
+  year         = {2025},
+  eprinttype    = {arXiv},
+  eprint       = {2509.23040},
+}
+```
