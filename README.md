@@ -1,6 +1,11 @@
-# ReMemR1
+# [ICLR 2026] Look Back to Reason Forward: Revisitable Memory for Long-Context LLM Agents
 
-This repo contains the official implementation of paper `Look Back to Reason Forward: Revisitable Memory for Long-Context LLM Agents`.
+This repo contains the official implementation of ICLR 2026 paper **ReMemR1**: `Look Back to Reason Forward: Revisitable Memory for Long-Context LLM Agents`.
+
+[![ICLR 2026](https://img.shields.io/badge/ICLR-2026-blue)]()
+[![arXiv](https://img.shields.io/badge/arXiv-2509.23040-b31b1b.svg)](https://arxiv.org/abs/2509.23040)
+[![Project Page](https://img.shields.io/badge/Project-Page-green)](https://github.com/syr-cn/ReMemR1)
+[![Paper page](https://huggingface.co/datasets/huggingface/badges/resolve/main/paper-page-sm-dark.svg)](https://huggingface.co/papers/2509.23040)
 
 ## News
 - [Jan 2026] Our paper get accepted by [ICLR 2026](https://openreview.net/forum?id=1cymflI2Lh) 🎉🎉🎉
