@@ -8,6 +8,7 @@ This repo contains the official implementation of ICLR 2026 paper **ReMemR1**: `
 [![Paper page](https://huggingface.co/datasets/huggingface/badges/resolve/main/paper-page-sm-dark.svg)](https://huggingface.co/papers/2509.23040)
 
 ## News
+- [Feb 2026] Our Checkpoint has been released on [Huggingface🤗](https://huggingface.co/yrshi/ReMemR1-7B) 🎉.
 - [Jan 2026] Our paper get accepted by [ICLR 2026](https://openreview.net/forum?id=1cymflI2Lh) 🎉🎉🎉
 - [Jan 2026] Nvidia propose [GDPO](https://arxiv.org/abs/2601.05242), which shares the same design logic as our multi-level reward aggregation
 - [Sep 2025] Our paper is released on [Huggingface](https://huggingface.co/papers/2509.23040) and [Alphaxiv](https://www.alphaxiv.org/abs/2509.23040). Please upvote our paper if you like this work :)
