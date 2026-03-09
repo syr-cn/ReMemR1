@@ -162,7 +162,7 @@ def compute_action_rewards(all_prompt_str: List[str], all_responses_str: List[st
             update_reward_score = generated_memory_recall - previous_memory_recall
 
             # reward for memory revisit
-            generated_revisit_recall = recall_metric(recalled_memories_str, ground_truth_list)
+            generated_revisit_recall = recall_metric(recalled_memories_str + ' ' + prompt_str, ground_truth_list)
             prompt_recall = recall_metric(prompt_str, ground_truth_list)
             revisit_reward_score = max(0, generated_revisit_recall - prompt_recall)
 
@@ -215,17 +215,18 @@ def calculate_callback_distance(prompt: str, response: str):
 def compute_action_metrics(batch: DataProto, tokenizer) -> Dict[str, Any]:
     prompts = []
     responses = []
+    recalled_memories = []
     for i in range(len(batch)):
         data_item = batch[i]
         prompt_ids = data_item.batch['prompts']
 
         prompt_length = prompt_ids.shape[-1]
-        
+
         valid_prompt_length = data_item.batch['attention_mask'][:prompt_length].sum()
         # NOTE: we assume the prompt is not needed, please make sure that is true!
         valid_prompt_ids = prompt_ids[-valid_prompt_length:]
 
-        response_ids = data_item.batch['responses'] 
+        response_ids = data_item.batch['responses']
         valid_response_length = data_item.batch['attention_mask'][prompt_length:].sum()
         valid_response_ids = response_ids[:valid_response_length]
 
@@ -234,7 +235,15 @@ def compute_action_metrics(batch: DataProto, tokenizer) -> Dict[str, Any]:
         response_str = tokenizer.decode(valid_response_ids, skip_special_tokens=True)
         prompts.append(prompt_str)
         responses.append(response_str)
-    
+
+        # decode recalled_memory if available
+        assert 'recalled_memories' in batch.batch, "recalled_memories is not in batch.batch"
+        recalled_memory_ids = batch.batch['recalled_memories'][i]
+        if hasattr(recalled_memory_ids, 'tolist'):
+            recalled_memory_ids = recalled_memory_ids.tolist()
+        recalled_memory_str = tokenizer.decode(recalled_memory_ids, skip_special_tokens=True)
+        recalled_memories.append(recalled_memory_str)
+
     metrics = {}
     for metric_name, metric_fn in [
         ('callback_count', calculate_callback_count),

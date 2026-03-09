@@ -32,7 +32,7 @@ class MemoryConfig(RConfig):
 
     @property
     def max_raw_input_length(self):
-        return self.max_prompt_length + self.chunk_size + self.max_memorization_length
+        return self.max_prompt_length + self.chunk_size + self.max_memorization_length + self.max_memorization_length
 
     # use property incase we want to adapt soft punishment to length.
     @property
@@ -167,7 +167,7 @@ class MemoryAgent(RAgent):
         self.token_message_template = TokenTemplate(self.chat_template.format(message=TEMPLATE), tokenizer)
         self.token_final_message_template = TokenTemplate(self.chat_template.format(message=TEMPLATE_FINAL_BOXED), tokenizer)
         # we assume that final_message template is difinately shorter than message_template
-        self.max_input_length = self.config.max_raw_input_length + self.token_message_template.length + self.config.max_raw_input_length
+        self.max_input_length = self.config.max_raw_input_length + self.token_message_template.length  # self.config.max_raw_input_length should not be counted twice as only memory blocks are recalled not full chunk
         logger.info(f'\n[RECURRENT] max_input_length: {self.config.max_raw_input_length}(raw) '
               f'+ {self.token_message_template.length}(message_template) = {self.max_input_length}\n')
         self.NO_MEMORY_STRING = "No previous memory"
