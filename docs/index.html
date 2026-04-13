@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="description"
+        content="ReMemR1: Look Back to Reason Forward — Revisitable Memory for Long-Context LLM Agents">
+  <meta name="keywords" content="Long-Context, Memory Agent, Reinforcement Learning, Large Language Models, Question Answering">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ReMemR1: Look Back to Reason Forward</title>
+
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-PYVRSFMDRL"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() { dataLayer.push(arguments); }
+    gtag('js', new Date());
+    gtag('config', 'G-PYVRSFMDRL');
+  </script>
+
+  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro"
+        rel="stylesheet">
+
+  <link rel="stylesheet" href="./static/css/bulma.min.css">
+  <link rel="stylesheet" href="./static/css/bulma-carousel.min.css">
+  <link rel="stylesheet" href="./static/css/bulma-slider.min.css">
+  <link rel="stylesheet" href="./static/css/fontawesome.all.min.css">
+  <link rel="stylesheet"
+        href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+  <link rel="stylesheet" href="./static/css/index.css">
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script defer src="./static/js/fontawesome.all.min.js"></script>
+  <script src="./static/js/bulma-carousel.min.js"></script>
+  <script src="./static/js/bulma-slider.min.js"></script>
+  <script src="./static/js/index.js"></script>
+</head>
+<body>
+
+
+<section class="hero">
+  <div class="hero-body">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered">
+        <div class="column has-text-centered">
+          <h1 class="title is-1 publication-title"
+              style="display: flex;flex-direction: row;align-items: center;justify-content: center;margin-bottom: 5px;">Look Back to Reason Forward:</h1>
+          <h1 class="title is-2 publication-title">Revisitable Memory for Long-Context LLM Agents</h1>
+
+          <div class="is-size-5 publication-authors">
+            <span class="author-block"><a href="https://scholar.google.com/citations?user=EWU3rdIAAAAJ&hl=en">Yaorui Shi</a><sup>1*</sup>,</span>
+            <span class="author-block">Yuxin Chen<sup>1*</sup>,</span>
+            <span class="author-block">Siyuan Wang<sup>2</sup>,</span>
+            <span class="author-block"><a href="https://scholar.google.com/citations?user=1uFZs6EAAAAJ&hl=en">Sihang Li</a><sup>1</sup>,</span>
+            <span class="author-block"><a href="https://scholar.google.com/citations?user=98SL3jMAAAAJ&hl=en">Hengxing Cai</a><sup>3</sup>,</span>
+            <span class="author-block">Qi Gu<sup>1</sup>,</span>
+            <span class="author-block"><a href="https://xiangwang1223.github.io">Xiang Wang</a><sup>1†</sup>,</span>
+            <span class="author-block">An Zhang<sup>1†</sup></span>
+          </div>
+
+          <div class="is-size-5 publication-authors">
+            <span class="author-block"><sup>1</sup>University of Science and Technology of China</span>
+            <br>
+            <span class="author-block"><sup>2</sup>Tsinghua University</span>
+            <span class="author-block"><sup>3</sup>DP Technology</span>
+          </div>
+
+          <div class="is-size-5 publication-authors">
+            <span class="author-block" style="font-size: 15px;"><sup>*</sup>Equal Contribution</span>
+            <span class="author-block" style="font-size: 15px;"><sup>†</sup>Correspondence</span>
+          </div>
+
+          <div class="column has-text-centered">
+            <div class="publication-links">
+              <!-- PDF Link. -->
+              <span class="link-block">
+                <a href="https://arxiv.org/abs/2509.23040"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="fas fa-file-pdf"></i>
+                  </span>
+                  <span>Paper</span>
+                </a>
+              </span>
+              <!-- Code Link. -->
+              <span class="link-block">
+                <a href="https://github.com/syr-cn/ReMemR1"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="fab fa-github"></i>
+                  </span>
+                  <span>Code</span>
+                </a>
+              </span>
+              <!-- Checkpoints. -->
+              <span class="link-block">
+                <a href="https://huggingface.co/yrshi/ReMemR1-7B"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="fas fa-database"></i>
+                  </span>
+                  <span>Checkpoints</span>
+                </a>
+              </span>
+              <!-- OpenReview Link -->
+              <span class="link-block">
+                <a href="https://openreview.net/forum?id=1cymflI2Lh"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="ai ai-open-access"></i>
+                  </span>
+                  <span>OpenReview</span>
+                </a>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- Abstract -->
+<section class="section">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-2">Abstract</h2>
+        <div class="content has-text-justified">
+          <p>
+            Large language models face challenges in long-context question answering, where key evidence of a query may be dispersed across millions of tokens. Existing works equip large language models with a memory buffer that is dynamically updated via a <b>linear document scan</b>, also known as the "memorize while reading" methods. While this approach scales efficiently, it suffers from <b>pruning of latent evidence</b>, information loss through overwriting, and sparse reinforcement learning signals. To tackle these challenges, we present <b>ReMemR1</b>, which integrates the mechanism of memory retrieval into the memory update process, enabling the agent to selectively callback historical memories for <u>non-linear reasoning</u>. To further strengthen training, we propose a <u>multi-level reward design</u>, which combines final-answer rewards with dense, step-level signals that guide effective memory use. Together, these contributions mitigate information degradation, improve supervision, and support complex multi-hop reasoning. Extensive experiments demonstrate that ReMemR1 significantly outperforms state-of-the-art baselines on long-context question answering while incurring negligible computational overhead.
+          </p>
+        </div>
+      </div>
+    </div>
+    <br>
+    <img class="columns is-centered has-text-centered framework" src="./static/images/conceptual_example.png" alt="Conceptual Example" width="70%" style="margin:0 auto">
+  </div>
+</section>
+
+
+<!-- Motivation -->
+<section class="section">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered has-text-centered">
+    <div class="columns is-centered">
+      <div class="column is-full-width">
+        <h2 class="title is-2">Motivation</h2>
+        <div class="columns is-centered">
+          <div class="column is-full-width">
+            <div class="content has-text-justified">
+              <img class="columns is-centered has-text-centered framework" src="./static/images/teaser.png" alt="Teaser" width="85%" style="margin:0 auto">
+              <br>
+              <p>
+                Current memory-augmented approaches for long-context QA face key limitations:
+                <ul>
+                  <li><b>Progressive information loss:</b> "Memorize while reading" paradigms perform a single linear scan over the document, progressively overwriting memory. This causes important evidence to be pruned, especially when key information is scattered far apart in the context.</li>
+                  <li><b>Sparse RL signals:</b> Existing RL-based methods rely solely on outcome-level rewards (final-answer correctness), which provide sparse and delayed feedback. This makes it difficult for the model to learn effective memory update and retrieval strategies at each step.</li>
+                </ul>
+              </p>
+              <p>
+                ReMemR1 addresses both challenges with: <b>(1)</b> a <em>callback mechanism</em> that enables non-linear memory revisiting over past details, and <b>(2)</b> a <em>multi-level reward design</em> combining outcome rewards with dense step-level supervision.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- Method -->
+<section class="section">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered has-text-centered">
+    <div class="columns is-centered">
+      <div class="column is-full-width">
+        <h2 class="title is-2">Method</h2>
+
+        <!-- Framework -->
+        <h3 class="title is-4">Memory Update with Callback</h3>
+        <div class="columns is-centered">
+          <div class="column is-full-width">
+            <div class="content has-text-justified">
+              <img class="columns is-centered has-text-centered framework" src="./static/images/framework.png" alt="Framework" width="90%" style="margin:0 auto">
+              <br>
+              <p>
+                Unlike conventional memory agents that use a restrictive state where each memory update only depends on the current context and previous memory, ReMemR1 augments the state representation with a <b>callback query</b>. At each time step, the agent:
+                <ul>
+                  <li><b>Updates memory:</b> Generates a new memory state by integrating the current document chunk with the previous memory.</li>
+                  <li><b>Generates callback query:</b> Produces a query to retrieve relevant information from the full memory history.</li>
+                  <li><b>Retrieves and integrates:</b> Uses the callback query to fetch past memories, enabling non-linear access to previously processed information.</li>
+                </ul>
+                This mechanism enables the agent to selectively revisit historical memories, preventing information loss from linear overwriting.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- State Transition -->
+        <h3 class="title is-4">History-Augmented State Transition</h3>
+        <div class="columns is-centered">
+          <div class="column is-full-width">
+            <div class="content has-text-justified">
+              <img class="columns is-centered has-text-centered framework" src="./static/images/x1.png" alt="State Transition" width="70%" style="margin:0 auto">
+              <br>
+              <p>
+                <b>(Left)</b> Conventional memory agents use a restrictive state <em>s<sub>t</sub> = m<sub>t</sub></em>, where the next memory only depends on the current context and memory. <b>(Right)</b> Our method represents states as <em>s<sub>t</sub> = (m<sub>t</sub>, q<sub>t</sub>)</em>, where the agent generates a callback query to retrieve relevant information from its entire memory history, enabling non-linear reasoning paths.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Multi-Level Reward -->
+        <h3 class="title is-4">Multi-Level Reward Design</h3>
+        <div class="columns is-centered">
+          <div class="column is-full-width">
+            <div class="content has-text-justified">
+              <img class="columns is-centered has-text-centered framework" src="./static/images/x2.png" alt="Multi-Level Reward" width="85%" style="margin:0 auto">
+              <br>
+              <p>
+                ReMemR1 employs a multi-level reward design that combines:
+                <ul>
+                  <li><b>Outcome rewards:</b> Measure the correctness of the final answer at terminal states.</li>
+                  <li><b>State rewards:</b> Provide dense, step-level signals that guide effective memory use at each intermediate step.</li>
+                </ul>
+                Each reward type is normalized at the corresponding level: state rewards across all states at the same step, and outcome rewards across all trajectories in the group. This design alleviates the sparse supervision problem while maintaining alignment with the ultimate objective.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- Results -->
+<section class="section">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered has-text-centered">
+    <div class="columns is-centered">
+      <div class="column is-full-width">
+        <h2 class="title is-2">Experimental Results</h2>
+
+        <!-- Main Results -->
+        <h3 class="title is-4">Main Results</h3>
+        <div class="columns is-centered">
+          <div class="column is-full-width">
+            <div class="content has-text-justified">
+              <p>
+                ReMemR1 was evaluated on long-context QA benchmarks with context lengths ranging from 100 to 6400 documents, using HotpotQA (in-distribution) and 2WikiMultiHopQA (out-of-distribution):
+              </p>
+
+              <!-- Table 1a: HotpotQA -->
+              <h4 style="text-align:center; margin-top:1.5em;">Accuracy on HotpotQA (In-Distribution)</h4>
+              <div style="overflow-x: auto;">
+              <table class="table is-bordered is-striped is-hoverable" style="margin: 0 auto; font-size: 0.9em;">
+                <thead>
+                  <tr>
+                    <th>Scale</th><th>Method</th>
+                    <th>Avg</th><th>100</th><th>200</th><th>400</th><th>800</th><th>1600</th><th>3200</th><th>6400</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr><td rowspan="2">3B</td><td>MemAgent</td><td>60.9</td><td>70.3</td><td>69.4</td><td>68.8</td><td>60.9</td><td>60.2</td><td>59.4</td><td>58.8</td></tr>
+                  <tr><td><b>ReMemR1 (Ours)</b></td><td><b>63.8</b></td><td><b>70.9</b></td><td><b>71.7</b></td><td><b>74.0</b></td><td><b>65.4</b></td><td><b>65.0</b></td><td><b>65.4</b></td><td><b>66.1</b></td></tr>
+                  <tr style="border-top: 2px solid #999;"><td rowspan="5">7B+</td><td>R1-Distill-7B</td><td>10.2</td><td>40.6</td><td>25.8</td><td>0.8</td><td>1.6</td><td>2.3</td><td>1.5</td><td>3.1</td></tr>
+                  <tr><td>Qwen2.5-1M-7B</td><td>54.7</td><td>75.8</td><td>71.9</td><td>68.0</td><td>67.2</td><td>69.5</td><td>22.7</td><td>0.0</td></tr>
+                  <tr><td>QwenLong-L1-32B</td><td>57.8</td><td>83.6</td><td>85.2</td><td>74.2</td><td>73.4</td><td>57.8</td><td>38.9</td><td>38.3</td></tr>
+                  <tr><td>MemAgent-7B</td><td>74.0</td><td>81.8</td><td>78.9</td><td>78.9</td><td>77.0</td><td>79.7</td><td>72.1</td><td>75.8</td></tr>
+                  <tr><td><b>ReMemR1-7B (Ours)</b></td><td><b>81.1</b></td><td><b>82.3</b></td><td><b>82.8</b></td><td><b>78.9</b></td><td><b>82.0</b></td><td><b>79.7</b></td><td><b>80.0</b></td><td><b>80.8</b></td></tr>
+                </tbody>
+              </table>
+              </div>
+
+              <!-- Table 1b: 2WikiMultiHopQA -->
+              <h4 style="text-align:center; margin-top:1.5em;">Accuracy on 2WikiMultiHopQA (Out-of-Distribution)</h4>
+              <div style="overflow-x: auto;">
+              <table class="table is-bordered is-striped is-hoverable" style="margin: 0 auto; font-size: 0.9em;">
+                <thead>
+                  <tr>
+                    <th>Scale</th><th>Method</th>
+                    <th>Avg</th><th>100</th><th>200</th><th>400</th><th>800</th><th>1600</th><th>3200</th><th>6400</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr><td rowspan="2">3B</td><td>MemAgent</td><td>40.2</td><td>41.4</td><td>45.3</td><td>39.4</td><td>36.3</td><td>28.9</td><td>26.7</td><td>25.9</td></tr>
+                  <tr><td><b>ReMemR1 (Ours)</b></td><td><b>42.5</b></td><td><b>53.5</b></td><td><b>50.4</b></td><td><b>41.7</b></td><td><b>37.0</b></td><td><b>36.2</b></td><td><b>35.4</b></td><td><b>37.8</b></td></tr>
+                  <tr style="border-top: 2px solid #999;"><td rowspan="5">7B+</td><td>R1-Distill-7B</td><td>25.8</td><td>36.7</td><td>29.7</td><td>0.0</td><td>0.8</td><td>2.3</td><td>2.3</td><td>0.8</td></tr>
+                  <tr><td>Qwen2.5-1M-7B</td><td>45.3</td><td>62.5</td><td>59.4</td><td>57.8</td><td>47.7</td><td>46.1</td><td>25.8</td><td>0.0</td></tr>
+                  <tr><td>QwenLong-L1-32B</td><td>45.3</td><td>74.2</td><td>69.5</td><td>65.6</td><td>58.6</td><td>38.3</td><td>24.6</td><td>29.9</td></tr>
+                  <tr><td>MemAgent-7B</td><td>50.8</td><td>61.7</td><td>57.8</td><td>47.6</td><td>50.7</td><td>44.5</td><td>46.9</td><td>44.7</td></tr>
+                  <tr><td><b>ReMemR1-7B (Ours)</b></td><td><b>55.6</b></td><td><b>63.9</b></td><td><b>63.1</b></td><td><b>54.5</b></td><td><b>54.7</b></td><td><b>45.4</b></td><td><b>48.9</b></td><td><b>50.3</b></td></tr>
+                </tbody>
+              </table>
+              </div>
+
+              <br>
+              <p>Key findings:</p>
+              <ul>
+                <li><b>ReMemR1 consistently outperforms all baselines</b> across both benchmarks and all context lengths.</li>
+                <li><b>The advantage grows with context length:</b> At 6400 documents, ReMemR1-7B achieves 80.8% on HotpotQA vs. 75.8% for MemAgent, and 50.3% vs. 44.7% on 2WikiMultiHopQA.</li>
+                <li><b>Strong generalization:</b> Trained only on HotpotQA, ReMemR1 still achieves the best results on the out-of-distribution 2WikiMultiHopQA.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- Distant Evidence -->
+        <h3 class="title is-4">Distant Evidence Challenge</h3>
+        <div class="columns is-centered">
+          <div class="column is-full-width">
+            <div class="content has-text-justified">
+              <img class="columns is-centered has-text-centered framework" src="./static/images/x3.png" alt="Distant Evidence" width="50%" style="margin:0 auto">
+              <br>
+              <p>
+                When key evidence pieces are placed far apart in the document, ReMemR1's callback mechanism proves especially effective. The accuracy gap between ReMemR1 and baselines widens as the evidence distance increases, demonstrating its robustness to scattered information.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Efficiency -->
+        <h3 class="title is-4">Computational Efficiency</h3>
+        <div class="columns is-centered">
+          <div class="column is-full-width">
+            <div class="content has-text-justified">
+              <img class="columns is-centered has-text-centered framework" src="./static/images/x4.png" alt="Efficiency" width="85%" style="margin:0 auto">
+              <br>
+              <p>
+                ReMemR1 consistently achieves higher accuracy with only modest additional computation. The callback retrieval module introduces less than <b>0.1% additional time</b> and <b>negligible memory overhead</b> (<0.001% of total memory), making it highly practical for real-world long-context scenarios.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Ablation -->
+        <h3 class="title is-4">Ablation Studies</h3>
+        <div class="columns is-centered">
+          <div class="column is-full-width">
+            <div class="content has-text-justified">
+              <br>
+              <p>
+                <ul>
+                  <li>The multi-level reward design with <b>&alpha;=0.8</b> consistently delivers the best accuracy, balancing outcome rewards with dense step-level guidance.</li>
+                  <li><b>RL-driven callback</b> significantly outperforms rule-based callback, confirming that learning when and what to recall through RL is essential.</li>
+                </ul>
+              </p>
+              <img class="columns is-centered has-text-centered framework" src="./static/images/x5.png" alt="Training Dynamics" width="70%" style="margin:0 auto">
+              <br>
+              <p style="text-align:center; color:#666; font-size:0.9em;">
+                Training dynamics: ReMemR1 quickly learns the callback format requirements under RL guidance, with performance rapidly improving during the first 20 steps.
+              </p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- Acknowledgements -->
+<section class="section">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered">
+      <div class="column is-full-width">
+        <h2 class="title is-3">Acknowledgements</h2>
+        <div class="content has-text-justified">
+          <p>
+            This project is built upon the foundational work of <a href="https://github.com/volcengine/verl">VeRL</a> and <a href="https://github.com/BytedTsinghua-SIA/MemAgent">MemAgent</a>. We sincerely thank the authors of these projects for their valuable contributions, which have significantly supported and inspired our work.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- Citation -->
+<section class="section" id="BibTeX">
+  <div class="container is-max-desktop content">
+    <h2 class="title">Citation</h2>
+    <pre><code>@article{rememr1,
+  author       = {Yaorui Shi and
+                  Yuxin Chen and
+                  Siyuan Wang and
+                  Sihang Li and
+                  Hengxing Cai and
+                  Qi Gu and
+                  Xiang Wang and
+                  An Zhang},
+  title        = {Look Back to Reason Forward: Revisitable Memory for Long-Context {LLM}
+                  Agents},
+  journal      = {CoRR},
+  volume       = {abs/2509.23040},
+  year         = {2025},
+  eprinttype    = {arXiv},
+  eprint       = {2509.23040},
+}</code></pre>
+  </div>
+</section>
+
+
+<footer class="footer">
+  <div class="container">
+    <div class="columns is-centered">
+      <div class="column is-8">
+        <div class="content">
+          <p style="text-align: center;">
+            The webpage is built based on <a href="https://github.com/nerfies/nerfies.github.io">Nerfies</a>.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
