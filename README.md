@@ -115,6 +115,19 @@ bash scripts/2_run_eval_ReMemR1.sh
 This project is licensed under the MIT License.
 It includes components from [MemAgent](https://github.com/BytedTsinghua-SIA/MemAgent), licensed under the Apache License 2.0. Thanks for their awesome work!
 
+## AI-Assisted Development
+
+This project includes a `.claude/` directory with structured guidance for AI coding agents (Claude Code, Codex, etc.):
+
+- **`.claude/CLAUDE.md`** — Project overview, architecture, key abstractions, and coding conventions
+- **`.claude/skills/modify-algorithm.md`** — Guide for modifying the MemoryAgent and callback mechanism
+- **`.claude/skills/modify-reward.md`** — Guide for modifying the multi-level reward system
+- **`.claude/skills/run-training.md`** — Guide for configuring and launching training runs
+- **`.claude/skills/run-evaluation.md`** — Guide for running evaluation and interpreting results
+- **`.claude/skills/add-new-task.md`** — Guide for adding new tasks and datasets
+
+These files help AI agents understand the codebase structure and make targeted modifications without extensive context exploration.
+
 ## Citation
 
 ```latex
