@@ -9,6 +9,7 @@ This repo contains the official implementation of ICLR 2026 paper **ReMemR1**: `
 [![Paper page](https://huggingface.co/datasets/huggingface/badges/resolve/main/paper-page-sm-dark.svg)](https://huggingface.co/papers/2509.23040)
 
 ## News
+- [Apr 2026] Added [`.claude/`](.claude/CLAUDE.md) AI-assisted development support with skill files for algorithm, reward, training, evaluation, and task extension 🤖.
 - [Feb 2026] Our Checkpoint has been released on [Huggingface🤗](https://huggingface.co/yrshi/ReMemR1-7B) 🎉.
 - [Jan 2026] Our paper get accepted by [ICLR 2026](https://openreview.net/forum?id=1cymflI2Lh) 🎉🎉🎉
 - [Jan 2026] Nvidia propose [GDPO](https://arxiv.org/abs/2601.05242), which shares the same design logic as our multi-level reward aggregation
